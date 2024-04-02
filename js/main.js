@@ -55,50 +55,6 @@ window.addEventListener('load', () => {
 
 
 
-
-
-
-// Проверка на совпадение паролей
-
-const regBtn = document.querySelector('.registration__btn');
-const regEmailInp = document.querySelector('.registration__email')
-const regPassInp = document.querySelector('.registration__password');
-const regRetypePassInp = document.querySelector('.registration__password-retyping');
-
-let inputs = [];
-inputs.push(regEmailInp, regPassInp, regRetypePassInp);
-
-regBtn.addEventListener('click', (e) => {
-    inputs.forEach(element => {
-        if (element.value === '') {
-            e.preventDefault();
-            element.style.border = '1px solid red';
-        }
-    });
-});
-
-regRetypePassInp.addEventListener('input', () => {
-    regRetypePassInp.style.border = '';
-    const passwordOrg = regPassInp.value;
-    const passwordRetype = regRetypePassInp.value;
-    if (IsPasswod(passwordOrg, passwordRetype)) {
-        regPassInp.style.border = '1px solid green';
-        regRetypePassInp.style.border = '1px solid green';
-    } else {
-        regPassInp.style.border = '1px solid red';
-        regRetypePassInp.style.border = '1px solid red';
-    }
-});
-
-function IsPasswod(orgPass, enterPass) {
-    if (orgPass !== enterPass) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-
 // Меню бургер
 const iconMenu = document.querySelector('.menu__icon');
 const menuBody = document.querySelector('.menu__body');
@@ -113,80 +69,186 @@ if (iconMenu) {
 
 
 // Рейтинг
-
 const raitingInput = document.querySelector('.raiting_input');
-const raitingStars = document.querySelectorAll('.raiting__star');
+const raitingStarsEls = document.querySelectorAll('.raiting__star');
+const raitingStarsBoxEl = document.querySelector('.raiting__stars');
 
 
-raitingStars.forEach(element => {
-    let fillingStars;
-    // let click = false;
-    let tempArray = [];
-    element.addEventListener('mouseover', (e) => {
-        fillingStars = [];
-        raitingStars.forEach((ellem) => {
-            if (ellem.classList.contains('_filling')) {
-                ellem.classList.remove('_filling');
-            }
 
-            // let temperRemovingStars = IsUserNotRechoice(tempArray, raitingStars);
-            // function IsUserNotRechoice(temp, stars) {
-            //     for (let i = 0; i < stars.length; i++) {
-            //         if (stars[i] !== temp[i]) {
-            //             return false;
-            //         }
-            //     }
-            //     return temp;
-            // }
+raitingStarsBoxEl.addEventListener('click', (e) => {
+    // Поиск звезды, которую выбрали
+    let target = e.target;
+    if (target.id === 'Star') {
+        target = target.parentElement;
+    } else if (target === raitingStarsBoxEl) {
+        return;
+    }
 
-            if (ellem.classList.contains('_fill')) {
-                ellem.classList.remove('_fill');
-            }
-        });
+    // Вписываем её значение в инпут
+    raitingInput.value = target.dataset.i;
 
-        let star = e.target;
-        if (star === undefined || star.id === 'Star') {
-            star = star.parentElement;
-        }
-        for (let i = 0; i < raitingStars.length; i++) {
-            const elm = raitingStars[i];
-            if (elm.dataset.i !== star.dataset.i) {
-                fillingStars.push(elm);
-            } else {
-                fillingStars.push(elm);
-                break;
-            }
-        }
-        fillingStars.forEach(el => {
-            el.classList.add('_filling');
-        });
-    });
-    element.addEventListener('mouseleave', () => {
-        fillingStars = [];
-        raitingStars.forEach(e => {
-            if (e.classList.contains('_filling')) {
-                e.classList.remove('_filling');
-            }
-        });
-        tempArray.forEach(elemment => {
-            elemment.classList.add('_fill');
-        });
-    });
-    element.addEventListener('click', (e) => {
-        click = true;
-        raitingInput.value = element.dataset.i;
-        console.log(raitingInput.value);
-        fillingStars.forEach(theElem => {
-            theElem.classList.add('_fill');
-        });
-        tempArray = fillingStars;
-        for (let i = 0; i < raitingStars.length; i++) {
-            const elnt = raitingStars[i];
-            if (elnt !== fillingStars[i]) {
-                elnt.classList.add('_fiil_when_click');
-            }
-        }
-    });
+    // Заполнение звёзд, до выбранной звезды
+    fillingStars(target.dataset.i);
 });
 
+raitingStarsBoxEl.addEventListener('mousemove', (e) => {
+    // Поиск звезды на которую смотрит мышь
+    let target = e.target;
+    if (target.id === 'Star') {
+        target = target.parentElement;
+    } else if (target === raitingStarsBoxEl) {
+        return;
+    }
 
+    // Заполнение звёзд, до той звезды на которую смотрит мышь
+    fillingStars(target.dataset.i);
+});
+
+raitingStarsBoxEl.addEventListener('mouseleave', () => {
+    // Заполнение звёзд, до значения выбранного рейтинга
+    fillingStars(raitingInput.value);
+});
+
+function fillingStars(heroStar) {
+    raitingStarsEls.forEach(element => {
+        // Очистка звёзд от заполнения и незаполнения
+        element.classList.remove('_fill');
+        element.classList.remove('_no-fill');
+
+        // Если рейтинг не выбран, то цвет стандартный 
+        // Фактически это в том случае если heroStar === raitingInput
+        if (heroStar !== '') {
+            if (element.dataset.i <= heroStar) {
+                element.classList.add('_fill');
+            }
+            if (element.dataset.i > heroStar) {
+                element.classList.add('_no-fill');
+            }
+        }
+    });
+}
+
+
+// ОТПРАВКА ФОРМЫ
+
+const form = document.querySelector('.registration');
+
+// Ошибка ввода email
+
+const EMAIL_REGEXP = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+
+const inputEmail = document.querySelector('.registration__email');
+
+
+inputEmail.addEventListener('input', () => {
+    if (!isEmailValid(inputEmail.value)) {
+        addError(inputEmail);
+    } else {
+        addNormal(inputEmail);
+    }
+    if (inputEmail.value === '') {
+        removeErrorAndNormal(inputEmail);
+    }
+});
+
+function isEmailValid(value) {
+    return EMAIL_REGEXP.test(value);
+}
+
+
+
+// Пароль
+
+const passwordEl = document.querySelector('.registration__password');
+const confirmPasswordEl = document.querySelector('.registration__password-retyping');
+
+
+
+confirmPasswordEl.addEventListener('input', () => {
+    if (!ThesePassMatch(passwordEl.value, confirmPasswordEl.value)) {
+        addError(passwordEl);
+        addError(confirmPasswordEl);
+    } else {
+        addNormal(passwordEl);
+        addNormal(confirmPasswordEl);
+    }
+    if (confirmPasswordEl.value === '') {
+        removeErrorAndNormal(passwordEl);
+        removeErrorAndNormal(confirmPasswordEl);
+    }
+});
+
+passwordEl.addEventListener('input', () => {
+    if (confirmPasswordEl.value !== '') {
+        if (!ThesePassMatch(passwordEl.value, confirmPasswordEl.value)) {
+            addError(passwordEl);
+            addError(confirmPasswordEl);
+        } else {
+            addNormal(passwordEl);
+            addNormal(confirmPasswordEl);
+        }
+    }
+});
+
+function ThesePassMatch(pass1, pass2) {
+    if (pass1 !== pass2) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+
+
+function addError(element) {
+    element.classList.add('error');
+    element.classList.remove('normal');
+}
+function addNormal(element) {
+    element.classList.remove('error');
+    element.classList.add('normal');
+}
+
+function removeErrorAndNormal(element) {
+    element.classList.remove('error');
+    element.classList.remove('normal');
+}
+
+
+// Проверка при отправке формы
+
+
+
+// let inputs = [];
+// inputs.push(inputEmail, passwordEl, confirmPasswordEl);
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+
+
+    // Получаем значения полей формы
+    const email = inputEmail.value;
+    const password = passwordEl.value;
+    const confirmPassword = confirmPasswordEl.value;
+
+    // Проверяем, что поля заполнены
+    if (!email || !password || !confirmPassword) {
+        alert('Пожалуйста, заполните все поля');
+        return;
+    }
+
+    if (!isEmailValid(email)) {
+        alert('Введите реальную почту');
+        return;
+    }
+
+    // Проверяем, что пароли совпадают
+    if (password !== confirmPassword) {
+        alert('Пароли не совпадают');
+        return;
+    }
+
+    // Если всё в порядке, отправляем форму
+    form.submit();
+});
