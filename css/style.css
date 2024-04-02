@@ -269,7 +269,7 @@ img {
     background-position: bottom;
 
     position: relative;
-
+    overflow: hidden;
 }
 
 .hero::before {
@@ -280,7 +280,9 @@ img {
     width: 100%;
     height: 100%;
     background: linear-gradient(172.5deg, #172755 76%, #ef2a82 79%, #ffffff 80%);
-
+    /* Я понимаю что решение не совсемстандартное, 
+однако хотелось добится чего-нибудь нестандартного 
+и универсального для любого разрешения */
     z-index: -300;
 
 }
@@ -302,7 +304,7 @@ img {
 .hero__img {
     max-width: 100%;
     max-height: 100%;
-
+    transform: scale(1.5) translate(100px, 0);
 }
 
 .hero__about {
@@ -951,6 +953,12 @@ img {
 
 }
 
+@media (min-height:919px) {
+    .hero {
+        background-position: center;
+    }
+}
+
 @media(max-width:1280px) {
     .center {
         max-width: 1065px;
@@ -1037,6 +1045,27 @@ img {
 
     }
 
+
+
+    .hero__container {
+        grid-template-columns: none;
+        grid-template-rows: repeat(2, 1fr);
+        justify-items: center;
+    }
+
+    .hero__image {
+
+        order: -1;
+    }
+
+    .hero__img {
+        transform: none;
+    }
+
+    .hero__about {
+        align-self: start;
+    }
+
     .pricing {
         overflow: hidden;
     }
@@ -1096,6 +1125,7 @@ img {
     .header {
         box-shadow: 0px 4px 4px 0px rgb(18, 33, 77);
         background: #172755;
+
     }
 
     .header__container {
@@ -1210,12 +1240,6 @@ img {
 
     .hero::before {
         background: linear-gradient(172.5deg, #172755 86%, #ef2a82 88%, #ffffff 90%);
-    }
-
-    .hero__container {
-        grid-template-columns: none;
-        grid-template-rows: repeat(2, 1fr);
-        justify-items: center;
     }
 
     .hero__image {
@@ -1375,14 +1399,7 @@ img {
 
 }
 
-@media(max-width: 296px) {
-    .sign__in {
-        display: none;
-    }
-
-    body._lock .wrapper .header .header__container .header__left .header__sign .sign__up {
-        display: block;
-    }
+@media(max-width: 320px) {
 
     .footer__container {
         flex-direction: column;
@@ -1393,5 +1410,15 @@ img {
         width: 100%;
         gap: 0;
         justify-content: space-between;
+    }
+}
+
+@media(max-width: 296px) {
+    .sign__in {
+        display: none;
+    }
+
+    body._lock .wrapper .header .header__container .header__left .header__sign .sign__up {
+        display: block;
     }
 }
