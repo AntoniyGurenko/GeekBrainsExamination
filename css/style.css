@@ -280,7 +280,7 @@ img {
     width: 100%;
     height: 100%;
     background: linear-gradient(172.5deg, #172755 76%, #ef2a82 79%, #ffffff 80%);
-    /* Я понимаю что решение не совсемстандартное, 
+    /* Я понимаю что решение не совсем стандартное, 
 однако хотелось добится чего-нибудь нестандартного 
 и универсального для любого разрешения */
     z-index: -300;
@@ -1420,5 +1420,21 @@ img {
 
     body._lock .wrapper .header .header__container .header__left .header__sign .sign__up {
         display: block;
+    }
+}
+
+@media(max-height: 768px) {
+    .hero__img {
+        transform: scale(1.2) translate(100px, 0);
+    }
+}
+
+@media(max-height: 573px) {
+    .hero__image {
+        padding: 20px 0 0 0;
+    }
+
+    .hero__img {
+        transform: scale(1.1) translate(100px, 0);
     }
 }
